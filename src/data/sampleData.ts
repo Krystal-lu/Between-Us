@@ -1,0 +1,366 @@
+import { SavedDraft, MessageContext } from '../types';
+
+export const DEMO_SCENARIOS = [
+  {
+    id: 'scenario-family',
+    name: 'Scenario 1 — Family (Dad)',
+    description: 'Repairing a relationship after an argument over advice and independence.',
+    recipient: 'Dad',
+    relationship: 'Parent / Family',
+    situations: ['Conflict', 'Apology'],
+    customSituation: '',
+    goals: ['Repair the relationship', 'Keep shared responsibility'],
+    customGoal: '',
+    userContext:
+      'We had an argument because he kept giving me advice and I became frustrated. I regret raising my voice, but I still want him to understand that sometimes I need more independence.',
+    shouldNotImply: 'That everything was my fault.',
+    tone: 'Warm' as const,
+    length: 'Medium' as const,
+    format: 'Text Message' as const,
+    prebuiltDraft:
+      'Hey Dad, I’ve been thinking about our conversation earlier. I’m sorry for raising my voice—I let my frustration get the better of me. I really appreciate how much you care and want to support me. At the same time, I’m working on making some decisions on my own and learning through that process. I love you and hope we can catch up soon.',
+    prebuiltAssumptions: {
+      supportedByInput: [
+        {
+          id: 'sup-1',
+          statement: 'User acknowledges and regrets raising their voice.',
+          sourceContext: '"I regret raising my voice..."',
+        },
+        {
+          id: 'sup-2',
+          statement: 'User values their father’s intent to give advice while asking for independence.',
+          sourceContext: '"he kept giving me advice... I still want him to understand that sometimes I need more independence."',
+        },
+      ],
+      possibleAssumptions: [
+        {
+          id: 'assump-1',
+          originalText: 'I know you always mean well with your advice',
+          category: 'recipient_assumption' as const,
+          categoryLabel: 'Recipient Assumption',
+          explanation: 'Assumes the recipient’s emotional state or intention beyond what you stated.',
+          neutralReplacement: 'I appreciate you taking the time to share your perspective',
+        },
+      ],
+      responsibilityBalance: {
+        accountability: {
+          title: 'Accountability',
+          scoreLabel: 'Balanced Regret',
+          description: 'Clearly owns raising your voice without taking blame for the original disagreement.',
+          status: 'positive' as const,
+        },
+        boundary: {
+          title: 'Boundary',
+          scoreLabel: 'Clear Need',
+          description: 'Explicitly conveys your need for autonomy and space to make personal decisions.',
+          status: 'positive' as const,
+        },
+        balance: {
+          title: 'Responsibility Balance',
+          scoreLabel: 'Shared Agency',
+          description: 'Avoids unilateral self-blame while preserving warmth and connection.',
+          status: 'positive' as const,
+        },
+        summary: 'This draft acknowledges your reaction while keeping your need for independence clear.',
+      },
+      analyzedAt: Date.now() - 3600000,
+    },
+  },
+  {
+    id: 'scenario-school',
+    name: 'Scenario 2 — School (Professor)',
+    description: 'Explaining a missed deadline due to submission time misunderstanding.',
+    recipient: 'Professor Miller',
+    relationship: 'Professor / Advisor',
+    situations: ['Misunderstanding'],
+    customSituation: '',
+    goals: ['Be understood', 'Stay professional'],
+    customGoal: '',
+    userContext:
+      'I missed a deadline because I misunderstood the submission time. I want to explain the situation and ask whether I can still submit.',
+    shouldNotImply: 'That the deadline was unclear or that the professor made a mistake.',
+    tone: 'Formal' as const,
+    length: 'Medium' as const,
+    format: 'Email' as const,
+    prebuiltDraft:
+      'Dear Professor Miller,\n\nI am writing to address the assignment due yesterday. Unfortunately, I misunderstood the submission cutoff time and missed the deadline due to an oversight on my part.\n\nI have completed the work and wanted to ask if it might still be possible to submit for late evaluation or partial credit. I understand course policies regarding deadlines and respect whatever determination you make.\n\nThank you for your time and consideration.\n\nSincerely,\nAlex Chen',
+    prebuiltAssumptions: {
+      supportedByInput: [
+        {
+          id: 'sup-1',
+          statement: 'Missed deadline due to personal misunderstanding of submission time.',
+          sourceContext: '"I missed a deadline because I misunderstood the submission time."',
+        },
+        {
+          id: 'sup-2',
+          statement: 'Inquiring politely if submission is still possible.',
+          sourceContext: '"ask whether I can still submit."',
+        },
+      ],
+      possibleAssumptions: [],
+      responsibilityBalance: {
+        accountability: {
+          title: 'Accountability',
+          scoreLabel: 'Direct Ownership',
+          description: 'States the misunderstanding plainly without deflecting onto the syllabus or portal.',
+          status: 'positive' as const,
+        },
+        boundary: {
+          title: 'Boundary',
+          scoreLabel: 'Respectful Request',
+          description: 'Asks for an evaluation opportunity while respecting the instructor’s policy.',
+          status: 'positive' as const,
+        },
+        balance: {
+          title: 'Responsibility Balance',
+          scoreLabel: 'No External Blame',
+          description: 'Protects the boundary that the professor did not make a mistake.',
+          status: 'positive' as const,
+        },
+        summary: 'This draft accepts sole responsibility for the timing misunderstanding without making excuses or challenging course deadlines.',
+      },
+      analyzedAt: Date.now() - 7200000,
+    },
+  },
+  {
+    id: 'scenario-roommate',
+    name: 'Scenario 3 — Roommate',
+    description: 'Setting a sound boundary after midnight without banning guests.',
+    recipient: 'Sam',
+    relationship: 'Roommate',
+    situations: ['Boundary setting', 'Conflict'],
+    customSituation: '',
+    goals: ['Set a clear boundary', 'Reduce tension'],
+    customGoal: '',
+    userContext:
+      'My roommate has had friends over late several nights this week. I want to ask them to keep things quieter after midnight.',
+    shouldNotImply: 'That I don’t want them to have friends over at all.',
+    tone: 'Calm' as const,
+    length: 'Short' as const,
+    format: 'Text Message' as const,
+    prebuiltDraft:
+      'Hey Sam, hope your week is going well. Quick request: when friends are over during the week, could we keep the noise down after midnight? Totally fine with having people over, just trying to make sure I can get decent sleep on weeknights. Thanks for understanding!',
+    prebuiltAssumptions: {
+      supportedByInput: [
+        {
+          id: 'sup-1',
+          statement: 'Friends have been visiting late during the week.',
+          sourceContext: '"had friends over late several nights this week"',
+        },
+        {
+          id: 'sup-2',
+          statement: 'Requests quieter volume after midnight, welcoming guests otherwise.',
+          sourceContext: '"keep things quieter after midnight... not imply that I don’t want them over at all."',
+        },
+      ],
+      possibleAssumptions: [],
+      responsibilityBalance: {
+        accountability: {
+          title: 'Accountability',
+          scoreLabel: 'Reasonable Context',
+          description: 'Frames the request around personal sleep needs rather than moralizing.',
+          status: 'positive' as const,
+        },
+        boundary: {
+          title: 'Boundary',
+          scoreLabel: 'Defined Standard',
+          description: 'Sets a tangible midnight milestone for volume.',
+          status: 'positive' as const,
+        },
+        balance: {
+          title: 'Responsibility Balance',
+          scoreLabel: 'Collaborative Tone',
+          description: 'Affirms that guests are welcome while protecting sleep hours.',
+          status: 'positive' as const,
+        },
+        summary: 'This draft firmly sets a midnight noise boundary while reassuring your roommate that having friends over is completely welcome.',
+      },
+      analyzedAt: Date.now() - 14400000,
+    },
+  },
+];
+
+export const INITIAL_RECENT_DRAFTS: SavedDraft[] = [
+  {
+    id: 'draft-dad',
+    title: 'Message to Dad',
+    recipientName: 'Dad',
+    context: {
+      id: 'ctx-dad',
+      recipientName: 'Dad',
+      relationship: 'Parent / Family',
+      situations: ['Conflict', 'Apology'],
+      customSituation: '',
+      goals: ['Repair the relationship', 'Keep shared responsibility'],
+      customGoal: '',
+      userContext:
+        'We had an argument because he kept giving me advice and I became frustrated. I regret raising my voice, but I still want him to understand that sometimes I need more independence.',
+      shouldNotImply: 'That everything was my fault.',
+      tone: 'Warm',
+      length: 'Medium',
+      format: 'Text Message',
+      createdAt: Date.now() - 86400000,
+      updatedAt: Date.now() - 86400000,
+    },
+    currentDraft: DEMO_SCENARIOS[0].prebuiltDraft,
+    activeMode: 'Balanced',
+    revisions: [
+      {
+        id: 'rev-dad-1',
+        versionNumber: 1,
+        content: DEMO_SCENARIOS[0].prebuiltDraft,
+        mode: 'Balanced',
+        timestamp: Date.now() - 86400000,
+        label: 'Initial Balanced Draft',
+      },
+    ],
+    assumptionCheckResult: DEMO_SCENARIOS[0].prebuiltAssumptions,
+    lastModified: Date.now() - 86400000,
+  },
+  {
+    id: 'draft-roommate',
+    title: 'Follow-up with Roommate',
+    recipientName: 'Sam',
+    context: {
+      id: 'ctx-roommate',
+      recipientName: 'Sam',
+      relationship: 'Roommate',
+      situations: ['Boundary setting', 'Conflict'],
+      customSituation: '',
+      goals: ['Set a clear boundary', 'Reduce tension'],
+      customGoal: '',
+      userContext:
+        'My roommate has had friends over late several nights this week. I want to ask them to keep things quieter after midnight.',
+      shouldNotImply: 'That I don’t want them to have friends over at all.',
+      tone: 'Calm',
+      length: 'Short',
+      format: 'Text Message',
+      createdAt: Date.now() - 172800000,
+      updatedAt: Date.now() - 172800000,
+    },
+    currentDraft: DEMO_SCENARIOS[2].prebuiltDraft,
+    activeMode: 'Balanced',
+    revisions: [
+      {
+        id: 'rev-roommate-1',
+        versionNumber: 1,
+        content: DEMO_SCENARIOS[2].prebuiltDraft,
+        mode: 'Balanced',
+        timestamp: Date.now() - 172800000,
+        label: 'Initial Balanced Draft',
+      },
+    ],
+    assumptionCheckResult: DEMO_SCENARIOS[2].prebuiltAssumptions,
+    lastModified: Date.now() - 172800000,
+  },
+  {
+    id: 'draft-professor',
+    title: 'Email to Professor',
+    recipientName: 'Professor Miller',
+    context: {
+      id: 'ctx-professor',
+      recipientName: 'Professor Miller',
+      relationship: 'Professor / Advisor',
+      situations: ['Misunderstanding'],
+      customSituation: '',
+      goals: ['Be understood', 'Stay professional'],
+      customGoal: '',
+      userContext:
+        'I missed a deadline because I misunderstood the submission time. I want to explain the situation and ask whether I can still submit.',
+      shouldNotImply: 'That the deadline was unclear or that the professor made a mistake.',
+      tone: 'Formal',
+      length: 'Medium',
+      format: 'Email',
+      createdAt: Date.now() - 259200000,
+      updatedAt: Date.now() - 259200000,
+    },
+    currentDraft: DEMO_SCENARIOS[1].prebuiltDraft,
+    activeMode: 'Balanced',
+    revisions: [
+      {
+        id: 'rev-prof-1',
+        versionNumber: 1,
+        content: DEMO_SCENARIOS[1].prebuiltDraft,
+        mode: 'Balanced',
+        timestamp: Date.now() - 259200000,
+        label: 'Initial Formal Draft',
+      },
+    ],
+    assumptionCheckResult: DEMO_SCENARIOS[1].prebuiltAssumptions,
+    lastModified: Date.now() - 259200000,
+  },
+  {
+    id: 'draft-manager',
+    title: 'Conversation with Manager',
+    recipientName: 'Elena (Manager)',
+    context: {
+      id: 'ctx-manager',
+      recipientName: 'Elena',
+      relationship: 'Manager / Coworker',
+      situations: ['Difficult feedback', 'Asking for support'],
+      customSituation: '',
+      goals: ['Stay professional', 'Be understood'],
+      customGoal: '',
+      userContext:
+        'I have been handed three urgent sprint priorities simultaneously with no timeline buffer. I want to flag the capacity bottleneck and align on the real order of urgency before quality slips.',
+      shouldNotImply: 'That I am refusing to work hard or blaming other team members.',
+      tone: 'Direct',
+      length: 'Medium',
+      format: 'Email',
+      createdAt: Date.now() - 345600000,
+      updatedAt: Date.now() - 345600000,
+    },
+    currentDraft:
+      'Hi Elena,\n\nI wanted to touch base regarding the three sprint deliverables currently marked urgent for this week. Given their combined scope, delivering all three without buffer increases the risk to quality and testing.\n\nCould we spend five minutes tomorrow to review the priority ranking between the client export and the schema migration? I want to ensure my focus is aligned with our most critical milestone first.\n\nBest,\nJordan',
+    activeMode: 'Balanced',
+    revisions: [
+      {
+        id: 'rev-mgr-1',
+        versionNumber: 1,
+        content:
+          'Hi Elena,\n\nI wanted to touch base regarding the three sprint deliverables currently marked urgent for this week. Given their combined scope, delivering all three without buffer increases the risk to quality and testing.\n\nCould we spend five minutes tomorrow to review the priority ranking between the client export and the schema migration? I want to ensure my focus is aligned with our most critical milestone first.\n\nBest,\nJordan',
+        mode: 'Balanced',
+        timestamp: Date.now() - 345600000,
+        label: 'Initial Direct Draft',
+      },
+    ],
+    assumptionCheckResult: {
+      supportedByInput: [
+        {
+          id: 'sup-mgr-1',
+          statement: 'Multiple urgent sprint priorities assigned without timeline buffer.',
+          sourceContext: '"three urgent sprint priorities simultaneously with no timeline buffer"',
+        },
+        {
+          id: 'sup-mgr-2',
+          statement: 'Proactively seeking priority sequencing to preserve quality standards.',
+          sourceContext: '"align on the real order of urgency before quality slips"',
+        },
+      ],
+      possibleAssumptions: [],
+      responsibilityBalance: {
+        accountability: {
+          title: 'Accountability',
+          scoreLabel: 'Proactive Ownership',
+          description: 'Identifies delivery risks before deadlines pass.',
+          status: 'positive',
+        },
+        boundary: {
+          title: 'Boundary',
+          scoreLabel: 'Realistic Capacity',
+          description: 'Sets a professional scope boundary without refusing contribution.',
+          status: 'positive',
+        },
+        balance: {
+          title: 'Responsibility Balance',
+          scoreLabel: 'Partnership Framing',
+          description: 'Frames prioritization as a collaborative decision for the team’s success.',
+          status: 'positive',
+        },
+        summary: 'This draft highlights the workload bottleneck clearly and constructively without appearing defensive.',
+      },
+      analyzedAt: Date.now() - 345600000,
+    },
+    lastModified: Date.now() - 345600000,
+  },
+];

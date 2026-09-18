@@ -1,0 +1,7 @@
+{
+  "name": "Between Us",
+  "description": "An AI-assisted writing workspace for difficult interpersonal communication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
